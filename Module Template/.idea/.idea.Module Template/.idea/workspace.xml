@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="49cf612f-3a08-4e22-912a-8a608cccc78d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/ZeroZeroScript.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ZeroZeroScript.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Module Template/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Module Template/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Manual/Template Manual.html" beforeDir="false" afterPath="$PROJECT_DIR$/Manual/Template Manual.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,7 +66,7 @@
       <option name="presentableId" value="Default" />
       <updated>1628477932311</updated>
       <workItem from="1628477939104" duration="26833000" />
-      <workItem from="1628562680576" duration="9702000" />
+      <workItem from="1628562680576" duration="11545000" />
     </task>
     <servers />
   </component>
