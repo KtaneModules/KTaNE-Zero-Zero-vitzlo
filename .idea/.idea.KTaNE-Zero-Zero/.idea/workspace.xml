@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="358d87ca-ae9c-4be9-b87c-26a616c59d6d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Assets/ZeroZeroScript.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ZeroZeroScript.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/star2.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/star2.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/star3.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/star3.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/star4.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/star4.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/star5.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/star5.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/star6.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/star6.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/star7.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/star7.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/star8.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/star8.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/zeroZero.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/zeroZero.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Manual/Template Manual.html" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1wYe4umNSYhbE3ngRhwt3wW0sqA" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="Discover.Launch.Via.Unity" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <created>1628639762298</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1628639762298</updated>
+      <workItem from="1628639769496" duration="6000" />
+    </task>
+    <servers />
+  </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="EditMode" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+</project>

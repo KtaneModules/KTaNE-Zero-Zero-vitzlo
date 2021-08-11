@@ -15,8 +15,9 @@ public class ZeroZeroScript: MonoBehaviour {
     public KMBombModule Module;
 
     public KMSelectable[] starButtons, gridButtons;
-    public MeshRenderer[] starIcons, gridColors;
-    public Texture[] starTextures;
+    public MeshRenderer[] gridColors;
+    public SpriteRenderer[] starIcons;
+    public Sprite[] starTextures, outlineTextures;
     public Transform[] starRots;
 
     private bool snVowel, snSumEven;
@@ -172,7 +173,6 @@ public class ZeroZeroScript: MonoBehaviour {
             stars[keyCorners[i]].setChannel(coordinates[2 * i] >= 0, i); // negates first coordinate if absent
 
             currentKey.setPoints(8 - Math.Abs(coordinates[2 * i + 1])); // sets point total in key corner
-            starIcons[keyCorners[i]].material.SetTexture("_MainTex", starTextures[currentKey.getPoints() - 2]);
 
             currentKey.setDir(snVowel ^ coordinates[2 * i + 1] < 0); // spins in corresponding direction
         }
@@ -182,9 +182,18 @@ public class ZeroZeroScript: MonoBehaviour {
         leftover = leftoverList[0];
         
         stars[leftover].setPoints(UnityEngine.Random.Range(2, 9)); // sets point total for unused corner
-        starIcons[leftover].material.SetTexture("_MainTex", starTextures[stars[leftover].getPoints() - 2]);
         stars[leftover].setDir(UnityEngine.Random.Range(0, 2) == 0);
 
+        for (int i = 0; i < 4; i++) {
+            if (stars[i].getStarColor() == Color.black) {
+                starIcons[i].sprite = outlineTextures[stars[i].getPoints() - 2];
+            }
+            else {
+                starIcons[i].sprite = starTextures[stars[i].getPoints() - 2];
+                starIcons[i].color = stars[i].getStarColor();
+            }
+        }
+        
         for (int i = 0; i < 4; i++) {
             Debug.LogFormat("[Zero, Zero #{0}] The {1} star is colored {2}, has {3} points, and is moving {4}clockwise.",
                 moduleId, cornerNames[i], colorNames[stars[i].getStarColor()], stars[i].getPoints(), (stars[i].isClockwise() ? "" : "counter-"));
@@ -203,7 +212,19 @@ public class ZeroZeroScript: MonoBehaviour {
                 (stars[i].getDirection() ? -1 : 1) * 40 * Time.deltaTime);
         }
     }
-    
+
+    private IEnumerator fadeOut() {
+        float delta = 0;
+        Color[] colorCache = starIcons.Select(x => x.color).ToArray();
+        while (delta < 1) {
+            delta += Time.deltaTime * 0.5f;
+            for (int i = 0; i < 4; i++) {
+                starIcons[i].color = Color.Lerp(colorCache[i], Color.clear, delta);
+            }
+            yield return null;
+        }
+    }
+
     // finds a valid space for the color, and updates the list's valid squares
     private int findPos(List<int> list) {
         int result = list[UnityEngine.Random.Range(0, list.Count)];
@@ -266,6 +287,7 @@ public class ZeroZeroScript: MonoBehaviour {
             if (gameState != 0) {
                 Module.HandleStrike();
                 Debug.LogFormat("[Zero, Zero #{0}] A corner screen was not pressed. Strike.", moduleId);
+                gameState = 0;
             }
             else if (i != originPos) {
                 Module.HandleStrike();
@@ -303,7 +325,8 @@ public class ZeroZeroScript: MonoBehaviour {
             else if (gameState == 3) {
                 Module.HandlePass();
                 moduleSolved = true;
-                Audio.PlaySoundAtTransform("corner" + gameState, Module.transform);
+                Audio.PlaySoundAtTransform("corner3", Module.transform);
+                StartCoroutine(fadeOut());
                 Debug.LogFormat("[Zero, Zero #{0}] The {1} corner was pressed. Module solved.", moduleId, cornerNames[i]);
                 gameState = 4;
             }
@@ -325,12 +348,13 @@ public class ZeroZeroScript: MonoBehaviour {
 
         if ((m = Regex.Match(command, "[A-G][1-7]",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success) {
+            yield return null;
             gridButtons[headers.IndexOf(command[0]) + (headers.IndexOf(command[1]) - 7) * 7].OnInteract();
         }
         else if (cornerNames.Contains(command)) {
+            yield return null;
             starButtons[cornerNames.IndexOf(command) % 4].OnInteract();
         }
-        yield return null;
     }
 
     IEnumerator TwitchHandleForcedSolve () {
