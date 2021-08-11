@@ -278,12 +278,12 @@ public class ZeroZeroScript: MonoBehaviour {
     // handles interactions inside the 7x7 grid
     private KMSelectable.OnInteractHandler gridPress(int i) {
         return delegate {
+            Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gridButtons[i].transform);
+            gridButtons[i].AddInteractionPunch(.1f);
+            
             if (gameState == 4) {
                 return false;
             }
-            
-            Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gridButtons[i].transform);
-            gridButtons[i].AddInteractionPunch(.1f);
             if (gameState != 0) {
                 Module.HandleStrike();
                 Debug.LogFormat("[Zero, Zero #{0}] A corner screen was not pressed. Strike.", moduleId);
@@ -307,12 +307,11 @@ public class ZeroZeroScript: MonoBehaviour {
         Dictionary<int, String> cornerNames = initializeCornerNames(); // dictionary for cleaner log
         
         return delegate {
+            Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, starButtons[i].transform);
+            starButtons[i].AddInteractionPunch(.1f);
             if (gameState == 4) {
                 return false;
             }
-            
-            Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, starButtons[i].transform);
-            starButtons[i].AddInteractionPunch(.1f);
             if (gameState == 0) {
                 Module.HandleStrike();
                 Debug.LogFormat("[Zero, Zero #{0}] A grid button was not pressed. Strike.", moduleId);
