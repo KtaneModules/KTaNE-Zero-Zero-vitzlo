@@ -3,7 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="358d87ca-ae9c-4be9-b87c-26a616c59d6d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.KTaNE-Zero-Zero/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.KTaNE-Zero-Zero/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/zeroZero.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/zeroZero.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TestHarness/TestHarness.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TestHarness/TestHarness.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Zero, Zero.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Zero, Zero.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZeroZeroScript.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ZeroZeroScript.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Manual/Zero, Zero.html" beforeDir="false" afterPath="$PROJECT_DIR$/Manual/Zero, Zero.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Manual/img/Component/Zero, Zero.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Manual/img/Component/Zero, Zero.svg" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +62,9 @@
       <updated>1628639762298</updated>
       <workItem from="1628639769496" duration="6000" />
       <workItem from="1628647310144" duration="2661000" />
+      <workItem from="1628973695184" duration="653000" />
+      <workItem from="1628991271731" duration="4316000" />
+      <workItem from="1629080974223" duration="3740000" />
     </task>
     <servers />
   </component>

@@ -20,8 +20,19 @@ public class ZeroZeroScript: MonoBehaviour {
     public Sprite[] starTextures, outlineTextures;
     public Transform[] starRots;
 
+    private Coroutine[] starCoroutines = new Coroutine[4];
+    private float[] starCoroutineDeltas = new float[4];
+
     private bool snVowel, snSumEven;
     private int numModules;
+    private string headers = "ABCDEFG1234567";
+    Dictionary<Color, string> colorNames = new Dictionary<Color, string> {
+        {Color.white, "white"}, {Color.yellow, "yellow"}, {Color.magenta, "magenta"}, {Color.red, "red"},
+        {Color.cyan, "cyan"}, {Color.green, "green"}, {Color.blue, "blue"}, {Color.black, "black"}
+    };
+    Dictionary<int, string> cornerNames = new Dictionary<int, string> {
+        {0, "top-left"}, {1, "top-right"}, {2, "bottom-left"}, {3, "bottom-right"}
+    };
 
     private int originPos, redPos, greenPos, bluePos;  // reading order positions of the origin and colored squares
     private int[] keyCorners = new int[3]; // key corners for red, green, and blue
@@ -29,12 +40,11 @@ public class ZeroZeroScript: MonoBehaviour {
     private readonly int[] positiveCorners = new int[3]; // the correct presses for red, green, and blue
     private readonly int[] coordinates = new int[6]; // the x and y coordinates for red, green, and blue
     private readonly Star[] stars = new Star[4]; // the corner stars, in reading order
-    private int gameState = 0; // 0: to submit origin   1-3: to submit a positive quadrant    4: solved module
+    private int gameState; // 0: to submit origin   1-3: to submit a positive quadrant    4: solved module
 
     static int moduleIdCounter = 1;
     int moduleId;
     private bool moduleSolved;
-    String headers = "ABCDEFG1234567";
 
     void Awake () {
         moduleId = moduleIdCounter++;
@@ -44,8 +54,6 @@ public class ZeroZeroScript: MonoBehaviour {
         snVowel = Bomb.GetSerialNumber().Any(ch => "AEIOU".Contains(ch));
         snSumEven = Bomb.GetSerialNumberNumbers().Sum() % 2 == 0;
         numModules = Bomb.GetModuleNames().Count();
-        Dictionary<Color, String> colorNames = initializeColorNames(); // dictionary for cleaner log
-        Dictionary<int, String> cornerNames = initializeCornerNames(); // dictionary for cleaner log
 
         for (int i = 0; i < 49; i++) gridButtons[i].OnInteract = gridPress(i);
         for (int i = 0; i < 4; i++) starButtons[i].OnInteract = starPress(i);
@@ -213,15 +221,23 @@ public class ZeroZeroScript: MonoBehaviour {
         }
     }
 
-    private IEnumerator fadeOut() {
-        float delta = 0;
-        Color[] colorCache = starIcons.Select(x => x.color).ToArray();
-        while (delta < 1) {
-            delta += Time.deltaTime * 0.5f;
-            for (int i = 0; i < 4; i++) {
-                starIcons[i].color = Color.Lerp(colorCache[i], Color.clear, delta);
-            }
+    private IEnumerator fadeOut(int pos, bool reverse = false) {
+        Color colorCache = starIcons[pos].color;
+        colorCache.a = 1;
+        while (starCoroutineDeltas[pos] < 1) {
+            starCoroutineDeltas[pos] += Time.deltaTime * 0.5f;
+            starIcons[pos].color = (reverse
+                ? Color.Lerp(colorCache, stars[pos].getStarColor() == Color.black ? Color.white : stars[pos].getStarColor(), starCoroutineDeltas[pos])
+                : Color.Lerp(colorCache, Color.clear, starCoroutineDeltas[pos]));
             yield return null;
+        }
+        starCoroutineDeltas[pos] = 0;
+    }
+
+    private void fadeIn(int maxPos) {
+        for (int i = 0; i < maxPos; i++) {
+            StopCoroutine(starCoroutines[i]);
+            StartCoroutine(fadeOut(i, true));
         }
     }
 
@@ -243,37 +259,9 @@ public class ZeroZeroScript: MonoBehaviour {
     }
 
     // converts the integer position in the 7x7 grid to an Excel coordinate pair
-    private String convertToCoordinate(int pos) {
+    private string convertToCoordinate(int pos) {
         return "" + headers[pos % 7] + headers[pos / 7 + 7];
     }
-
-    // initializes the dictionary which converts the inbuilt Color class to its name
-    private Dictionary<Color, String> initializeColorNames() {
-        return new Dictionary<Color, String> {
-            {Color.white, "white"},
-            {Color.yellow, "yellow"},
-            {Color.magenta, "magenta"},
-            {Color.red, "red"},
-            {Color.cyan, "cyan"},
-            {Color.green, "green"},
-            {Color.blue, "blue"},
-            {Color.black, "black"}
-        };
-    }
-
-    // initializes the dictionary which converts the corner positions to their relative positions
-    private Dictionary<int, String> initializeCornerNames() {
-        return new Dictionary<int, string> {
-            {0, "top left"},
-            {1, "top right"},
-            {2, "bottom left"},
-            {3, "bottom right"}
-        };
-    }
-
-#pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"Use <!{0} B3> to press the button in the second column and third row. Use <!{0} top right> or <!{0} tr> to press the top-right screen.";
-    #pragma warning restore 414
 
     // handles interactions inside the 7x7 grid
     private KMSelectable.OnInteractHandler gridPress(int i) {
@@ -287,6 +275,7 @@ public class ZeroZeroScript: MonoBehaviour {
             if (gameState != 0) {
                 Module.HandleStrike();
                 Debug.LogFormat("[Zero, Zero #{0}] A corner screen was not pressed. Strike.", moduleId);
+                fadeIn(gameState);
                 gameState = 0;
             }
             else if (i != originPos) {
@@ -295,6 +284,7 @@ public class ZeroZeroScript: MonoBehaviour {
             }
             else {
                 gameState = 1;
+                starCoroutines[0] = StartCoroutine(fadeOut(0));
                 Debug.LogFormat("[Zero, Zero #{0}] {1} was pressed. That was correct.", moduleId, convertToCoordinate(i));
             }
 
@@ -304,8 +294,6 @@ public class ZeroZeroScript: MonoBehaviour {
     
     // handles interactions with the four corner screens
     private KMSelectable.OnInteractHandler starPress(int i) {
-        Dictionary<int, String> cornerNames = initializeCornerNames(); // dictionary for cleaner log
-        
         return delegate {
             Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, starButtons[i].transform);
             starButtons[i].AddInteractionPunch(.1f);
@@ -315,29 +303,36 @@ public class ZeroZeroScript: MonoBehaviour {
             if (gameState == 0) {
                 Module.HandleStrike();
                 Debug.LogFormat("[Zero, Zero #{0}] A grid button was not pressed. Strike.", moduleId);
+                fadeIn(gameState);
             }
             else if (i != positiveCorners[gameState - 1]) {
                 Module.HandleStrike();
                 Debug.LogFormat("[Zero, Zero #{0}] The {1} corner was pressed. Strike.", moduleId, cornerNames[i]);
+                fadeIn(gameState);
                 gameState = 0;
             }
             else if (gameState == 3) {
                 Module.HandlePass();
                 moduleSolved = true;
                 Audio.PlaySoundAtTransform("corner3", Module.transform);
-                StartCoroutine(fadeOut());
                 Debug.LogFormat("[Zero, Zero #{0}] The {1} corner was pressed. Module solved.", moduleId, cornerNames[i]);
+                starCoroutines[3] = StartCoroutine(fadeOut(3));
                 gameState = 4;
             }
             else {
                 Audio.PlaySoundAtTransform("corner" + gameState, Module.transform);
                 Debug.LogFormat("[Zero, Zero #{0}] The {1} corner was pressed. That was correct.", moduleId, cornerNames[i]);
+                starCoroutines[gameState] = StartCoroutine(fadeOut(gameState));
                 gameState++;
             }
 
             return false;
         };
     }
+    
+    #pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"Use <!{0} B3> to press the button in the second column and third row. Use <!{0} top right> or <!{0} tr> to press the top-right screen.";
+    #pragma warning restore 414
 
     IEnumerator ProcessTwitchCommand (string command) {
         command = command.Trim().ToUpperInvariant();
@@ -345,8 +340,7 @@ public class ZeroZeroScript: MonoBehaviour {
         List<String> cornerNames = new List<String> {"TOP LEFT", "TOP RIGHT", "BOTTOM LEFT", "BOTTOM RIGHT",
             "TOP-LEFT", "TOP-RIGHT", "BOTTOM-LEFT", "BOTTOM-RIGHT", "TL", "TR", "BL", "BR"};
 
-        if ((m = Regex.Match(command, "[A-G][1-7]",
-            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success) {
+        if (Regex.Match(command, "[A-G][1-7]", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success) {
             yield return null;
             gridButtons[headers.IndexOf(command[0]) + (headers.IndexOf(command[1]) - 7) * 7].OnInteract();
         }
