@@ -35,6 +35,7 @@ public class ZeroZeroScript: MonoBehaviour {
     };
 
     private int originPos, redPos, greenPos, bluePos;  // reading order positions of the origin and colored squares
+    List<int> posList = new List<int>();
     private int[] keyCorners = new int[3]; // key corners for red, green, and blue
     private int leftover; // the non-key corner
     private readonly int[] positiveCorners = new int[3]; // the correct presses for red, green, and blue
@@ -47,7 +48,7 @@ public class ZeroZeroScript: MonoBehaviour {
     private bool moduleSolved;
 
     void Awake () {
-        moduleId = moduleIdCounter++;
+        moduleId = moduleIdCounter++; // version 1.2.0
     }
 
     void Start () {
@@ -74,7 +75,7 @@ public class ZeroZeroScript: MonoBehaviour {
                        || (tempPosList[1] - tempPosList[0]) % (tempPosList[2] - tempPosList[1]) == 0;
         } while (colinear);
 
-        List<int> posList = new List<int>() {redPos, greenPos, bluePos};
+        posList = new List<int>() {redPos, greenPos, bluePos};
         List<Color> rgb = new List<Color>() {Color.red, Color.green, Color.blue};
 
         for (int i = 0; i < 3; i++) {
@@ -94,7 +95,7 @@ public class ZeroZeroScript: MonoBehaviour {
         
         // gridColors[originPos].material.color = Color.yellow; // testing
 
-        // key corners diamond, will fix if i figure out a neat method
+        // key corners diamond, will clean up if i figure out a neat method
         switch (numModules % 8 + (snSumEven ? 8 : 0)) { // cw -> +8
             case 0:
             case 14:
@@ -138,7 +139,7 @@ public class ZeroZeroScript: MonoBehaviour {
                 break;
         }
 
-        // picks positive quadrant for red, green, and blue
+        // picks positive quadrants for red, green, and blue
         for (int i = 0; i < 3; i++) {
             // diagonal from TL to BR
             if (Math.Abs(originPos - posList[i]) % 8 == 0) {
@@ -213,14 +214,14 @@ public class ZeroZeroScript: MonoBehaviour {
             moduleId, cornerNames[positiveCorners[0]], cornerNames[positiveCorners[1]], cornerNames[positiveCorners[2]]);
     }
 
-    void Update ()
-    {
+    void Update () {
         for (int i = 0; i < 4; i++) {
             starRots[i].RotateAround(starRots[i].position, starRots[i].forward,
                 (stars[i].getDirection() ? -1 : 1) * 40 * Time.deltaTime);
         }
     }
 
+    // fades out the star at the given position to black, or back to full color if reverse is true
     private IEnumerator fadeOut(int pos, bool reverse = false) {
         Color colorCache = starIcons[pos].color;
         colorCache.a = 1;
@@ -234,14 +235,28 @@ public class ZeroZeroScript: MonoBehaviour {
         starCoroutineDeltas[pos] = 0;
     }
 
+    // fades all stars up to the specified position back to their original colors (following a strike)
     private void fadeIn(int maxPos) {
         for (int i = 0; i < maxPos; i++) {
             StopCoroutine(starCoroutines[i]);
             StartCoroutine(fadeOut(i, true));
         }
     }
+    
+    // fades the grid colors to white once the module is solved
+    private IEnumerator fadeColors() {
+        Color[] colorCache = {Color.red, Color.green, Color.blue,};
+        float delta = 0;
+        while (delta < 1) {
+            delta += Time.deltaTime * 0.5f;
+            for (int i = 0; i < 3; i++) {
+                gridColors[posList[i]].material.color = (Color.Lerp(colorCache[i], Color.white, delta));
+            }
+            yield return null;
+        }
+    }
 
-    // finds a valid space for the color, and updates the list's valid squares
+    // finds a valid space for the color, and updates the list's valid squares (no mutual queen-capturing)
     private int findPos(List<int> list) {
         int result = list[UnityEngine.Random.Range(0, list.Count)];
         int resultRow = result / 7;
@@ -255,6 +270,15 @@ public class ZeroZeroScript: MonoBehaviour {
                 list.Remove(pos);
             }
         }
+
+        /* need to optimize the above code's diagonals
+        for (int i = result % 7; i < 49; i += 7) {
+            if (list.Contains(i)) list.Remove(i); // vertical pass
+        }
+        for (int i = result / 7; i < result / 7 + 1; i++) {
+            if (list.Contains(i)) list.Remove(i); // horizontal pass
+        }
+        */
         return result;
     }
 
@@ -317,6 +341,7 @@ public class ZeroZeroScript: MonoBehaviour {
                 Audio.PlaySoundAtTransform("corner3", Module.transform);
                 Debug.LogFormat("[Zero, Zero #{0}] The {1} corner was pressed. Module solved.", moduleId, cornerNames[i]);
                 starCoroutines[3] = StartCoroutine(fadeOut(3));
+                StartCoroutine(fadeColors());
                 gameState = 4;
             }
             else {
@@ -360,6 +385,7 @@ public class Star {
     private int points;
     private bool cw;
 
+    // converts this star's channels into a proper color
     public Color getStarColor() {
         if (channels[0] && channels[1] && channels[2]) {
             return Color.white;
