@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ca865aa5-584f-4ac0-96b3-1c96fe898ca2" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.KTaNE-Zero-Zero/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.KTaNE-Zero-Zero/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Editor/Resources/ModConfig.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Editor/Resources/ModConfig.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Manual/Zero, Zero.html" beforeDir="false" afterPath="$PROJECT_DIR$/Manual/Zero, Zero.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +39,7 @@
       <updated>1628668417041</updated>
       <workItem from="1628668419725" duration="1049000" />
       <workItem from="1628671725982" duration="827000" />
+      <workItem from="1630588369031" duration="70000" />
     </task>
     <servers />
   </component>

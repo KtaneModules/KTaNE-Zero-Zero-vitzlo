@@ -3,18 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="358d87ca-ae9c-4be9-b87c-26a616c59d6d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.KTaNE-Zero-Zero/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.KTaNE-Zero-Zero/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Audio/corner1.wav" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Audio/corner1.wav" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Audio/corner1.wav.asd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Audio/corner1.wav.asd.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Audio/corner2.wav" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Audio/corner2.wav" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Audio/corner2.wav.asd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Audio/corner2.wav.asd.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Audio/corner3.wav" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Audio/corner3.wav" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Audio/corner3.wav.asd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Audio/corner3.wav.asd.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Editor/Resources/ModConfig.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Editor/Resources/ModConfig.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Editor/Resources/WorkshopItem.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Editor/Resources/WorkshopItem.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/ZeroZeroScript.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ZeroZeroScript.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +62,7 @@
       <workItem from="1629080974223" duration="4710000" />
       <workItem from="1629091921246" duration="1810000" />
       <workItem from="1629610408356" duration="2110000" />
-      <workItem from="1630125427388" duration="4086000" />
+      <workItem from="1630125427388" duration="4614000" />
     </task>
     <servers />
   </component>
