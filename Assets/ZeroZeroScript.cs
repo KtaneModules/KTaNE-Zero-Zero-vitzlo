@@ -2,11 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mime;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using KModkit;
-using UnityEngine.UI;
 
 public class ZeroZeroScript: MonoBehaviour {
 
@@ -20,17 +18,17 @@ public class ZeroZeroScript: MonoBehaviour {
     public Sprite[] starTextures, outlineTextures;
     public Transform[] starRots;
 
-    private Coroutine[] starCoroutines = new Coroutine[4];
-    private float[] starCoroutineDeltas = new float[4];
+    private readonly Coroutine[] starCoroutines = new Coroutine[4];
+    private readonly float[] starCoroutineDeltas = new float[4];
 
     private bool snVowel, snSumEven;
     private int numModules;
     private string headers = "ABCDEFG1234567";
-    Dictionary<Color, string> colorNames = new Dictionary<Color, string> {
+    private readonly Dictionary<Color, string> colorNames = new Dictionary<Color, string> {
         {Color.white, "white"}, {Color.yellow, "yellow"}, {Color.magenta, "magenta"}, {Color.red, "red"},
         {Color.cyan, "cyan"}, {Color.green, "green"}, {Color.blue, "blue"}, {Color.black, "black"}
     };
-    Dictionary<int, string> cornerNames = new Dictionary<int, string> {
+    private readonly Dictionary<int, string> cornerNames = new Dictionary<int, string> {
         {0, "top-left"}, {1, "top-right"}, {2, "bottom-left"}, {3, "bottom-right"}
     };
 
@@ -48,16 +46,18 @@ public class ZeroZeroScript: MonoBehaviour {
     private bool moduleSolved;
 
     void Awake () {
-        moduleId = moduleIdCounter++; // version 1.2.0
+        moduleId = moduleIdCounter++; // version 1.2.1
     }
 
     void Start () {
+        Debug.LogFormat("[Zero, Zero #{0}] Version: 1.2.0", moduleId);
+        
         snVowel = Bomb.GetSerialNumber().Any(ch => "AEIOU".Contains(ch));
         snSumEven = Bomb.GetSerialNumberNumbers().Sum() % 2 == 0;
         numModules = Bomb.GetModuleNames().Count();
 
-        for (int i = 0; i < 49; i++) gridButtons[i].OnInteract = gridPress(i);
-        for (int i = 0; i < 4; i++) starButtons[i].OnInteract = starPress(i);
+        for (int i = 0; i < 49; i++) gridButtons[i].OnInteract = GridPress(i);
+        for (int i = 0; i < 4; i++) starButtons[i].OnInteract = StarPress(i);
 
         bool colinear; // are the spaces along the same line? e.g. A2 C3 E4
         do {
@@ -80,7 +80,7 @@ public class ZeroZeroScript: MonoBehaviour {
 
         for (int i = 0; i < 3; i++) {
             gridColors[posList[i]].material.color = rgb[i];
-            Debug.LogFormat("[Zero, Zero #{0}] The {1} square is at {2}.", moduleId, colorNames[rgb[i]], convertToCoordinate(posList[i]));
+            Debug.LogFormat("[Zero, Zero #{0}] The {1} square is at {2}.", moduleId, colorNames[rgb[i]], ConvertToCoordinate(posList[i]));
         }
 
         do {
@@ -119,8 +119,8 @@ public class ZeroZeroScript: MonoBehaviour {
                 keyCorners = new[] {3, 0, 1};
                 break;
             case 6:
-            case 12:    
-                keyCorners = new[] {1, 3, 0};
+            case 12:
+                keyCorners = new[] {0, 2, 3};
                 break;
             case 7:
                 keyCorners = new[] {3, 1, 2};
@@ -177,39 +177,39 @@ public class ZeroZeroScript: MonoBehaviour {
 
             // sets channel status in each non-key corner using relevant binary digit
             for (int j = 0; j < 3; j++) {
-                stars[nonKeyCorners[j]].setChannel(Math.Abs(coordinates[2 * i]) % Math.Pow(2, 3 - j) >= Math.Pow(2, 2 - j), i);
+                stars[nonKeyCorners[j]].SetChannel(Math.Abs(coordinates[2 * i]) % Math.Pow(2, 3 - j) >= Math.Pow(2, 2 - j), i);
             }
-            stars[keyCorners[i]].setChannel(coordinates[2 * i] >= 0, i); // negates first coordinate if absent
+            stars[keyCorners[i]].SetChannel(coordinates[2 * i] >= 0, i); // negates first coordinate if absent
 
-            currentKey.setPoints(8 - Math.Abs(coordinates[2 * i + 1])); // sets point total in key corner
+            currentKey.SetPoints(8 - Math.Abs(coordinates[2 * i + 1])); // sets point total in key corner
 
-            currentKey.setDir(snVowel ^ coordinates[2 * i + 1] < 0); // spins in corresponding direction
+            currentKey.SetDir(snVowel ^ coordinates[2 * i + 1] < 0); // spins in corresponding direction
         }
 
         List<int> leftoverList = new List<int> {0, 1, 2, 3};
         leftoverList.RemoveAll(i => keyCorners.Contains(i));
         leftover = leftoverList[0];
         
-        stars[leftover].setPoints(UnityEngine.Random.Range(2, 9)); // sets point total for unused corner
-        stars[leftover].setDir(UnityEngine.Random.Range(0, 2) == 0);
+        stars[leftover].SetPoints(UnityEngine.Random.Range(2, 9)); // sets point total for unused corner
+        stars[leftover].SetDir(UnityEngine.Random.Range(0, 2) == 0);
 
         for (int i = 0; i < 4; i++) {
-            if (stars[i].getStarColor() == Color.black) {
-                starIcons[i].sprite = outlineTextures[stars[i].getPoints() - 2];
+            if (stars[i].GetStarColor() == Color.black) {
+                starIcons[i].sprite = outlineTextures[stars[i].GetPoints() - 2];
             }
             else {
-                starIcons[i].sprite = starTextures[stars[i].getPoints() - 2];
-                starIcons[i].color = stars[i].getStarColor();
+                starIcons[i].sprite = starTextures[stars[i].GetPoints() - 2];
+                starIcons[i].color = stars[i].GetStarColor();
             }
         }
         
         for (int i = 0; i < 4; i++) {
             Debug.LogFormat("[Zero, Zero #{0}] The {1} star is colored {2}, has {3} points, and is moving {4}clockwise.",
-                moduleId, cornerNames[i], colorNames[stars[i].getStarColor()], stars[i].getPoints(), (stars[i].isClockwise() ? "" : "counter-"));
+                moduleId, cornerNames[i], colorNames[stars[i].GetStarColor()], stars[i].GetPoints(), (stars[i].IsClockwise() ? "" : "counter-"));
         }
         Debug.LogFormat("[Zero, Zero #{0}] The key corners for red, green, and blue are {1}, {2}, and {3}.", moduleId,
             cornerNames[keyCorners[0]], cornerNames[keyCorners[1]], cornerNames[keyCorners[2]]);
-        Debug.LogFormat("[Zero, Zero #{0}] The origin is at {1}.", moduleId, convertToCoordinate(originPos));
+        Debug.LogFormat("[Zero, Zero #{0}] The origin is at {1}.", moduleId, ConvertToCoordinate(originPos));
         Debug.LogFormat("[Zero, Zero #{0}] The correct quadrants in order are {1}, {2}, and {3}.",
             moduleId, cornerNames[positiveCorners[0]], cornerNames[positiveCorners[1]], cornerNames[positiveCorners[2]]);
     }
@@ -217,18 +217,18 @@ public class ZeroZeroScript: MonoBehaviour {
     void Update () {
         for (int i = 0; i < 4; i++) {
             starRots[i].RotateAround(starRots[i].position, starRots[i].forward,
-                (stars[i].getDirection() ? -1 : 1) * 40 * Time.deltaTime);
+                (stars[i].GetDirection() ? -1 : 1) * 40 * Time.deltaTime);
         }
     }
 
     // fades out the star at the given position to black, or back to full color if reverse is true
-    private IEnumerator fadeOut(int pos, bool reverse = false) {
+    private IEnumerator FadeOut(int pos, bool reverse = false) {
         Color colorCache = starIcons[pos].color;
         colorCache.a = 1;
         while (starCoroutineDeltas[pos] < 1) {
             starCoroutineDeltas[pos] += Time.deltaTime * 0.5f;
             starIcons[pos].color = (reverse
-                ? Color.Lerp(colorCache, stars[pos].getStarColor() == Color.black ? Color.white : stars[pos].getStarColor(), starCoroutineDeltas[pos])
+                ? Color.Lerp(colorCache, stars[pos].GetStarColor() == Color.black ? Color.white : stars[pos].GetStarColor(), starCoroutineDeltas[pos])
                 : Color.Lerp(colorCache, Color.clear, starCoroutineDeltas[pos]));
             yield return null;
         }
@@ -236,15 +236,15 @@ public class ZeroZeroScript: MonoBehaviour {
     }
 
     // fades all stars up to the specified position back to their original colors (following a strike)
-    private void fadeIn(int maxPos) {
+    private void FadeIn(int maxPos) {
         for (int i = 0; i < maxPos; i++) {
             StopCoroutine(starCoroutines[i]);
-            StartCoroutine(fadeOut(i, true));
+            StartCoroutine(FadeOut(i, true));
         }
     }
     
     // fades the grid colors to white once the module is solved
-    private IEnumerator fadeColors() {
+    private IEnumerator FadeColors() {
         Color[] colorCache = {Color.red, Color.green, Color.blue,};
         float delta = 0;
         while (delta < 1) {
@@ -283,12 +283,12 @@ public class ZeroZeroScript: MonoBehaviour {
     }
 
     // converts the integer position in the 7x7 grid to an Excel coordinate pair
-    private string convertToCoordinate(int pos) {
+    private string ConvertToCoordinate(int pos) {
         return "" + headers[pos % 7] + headers[pos / 7 + 7];
     }
 
     // handles interactions inside the 7x7 grid
-    private KMSelectable.OnInteractHandler gridPress(int i) {
+    private KMSelectable.OnInteractHandler GridPress(int i) {
         return delegate {
             Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gridButtons[i].transform);
             gridButtons[i].AddInteractionPunch(.1f);
@@ -299,17 +299,17 @@ public class ZeroZeroScript: MonoBehaviour {
             if (gameState != 0) {
                 Module.HandleStrike();
                 Debug.LogFormat("[Zero, Zero #{0}] A corner screen was not pressed. Strike.", moduleId);
-                fadeIn(gameState);
+                FadeIn(gameState);
                 gameState = 0;
             }
             else if (i != originPos) {
                 Module.HandleStrike();
-                Debug.LogFormat("[Zero, Zero #{0}] {1} was pressed. Strike.", moduleId, convertToCoordinate(i));
+                Debug.LogFormat("[Zero, Zero #{0}] {1} was pressed. Strike.", moduleId, ConvertToCoordinate(i));
             }
             else {
                 gameState = 1;
-                starCoroutines[0] = StartCoroutine(fadeOut(0));
-                Debug.LogFormat("[Zero, Zero #{0}] {1} was pressed. That was correct.", moduleId, convertToCoordinate(i));
+                starCoroutines[0] = StartCoroutine(FadeOut(0));
+                Debug.LogFormat("[Zero, Zero #{0}] {1} was pressed. That was correct.", moduleId, ConvertToCoordinate(i));
             }
 
             return false;
@@ -317,7 +317,7 @@ public class ZeroZeroScript: MonoBehaviour {
     }
     
     // handles interactions with the four corner screens
-    private KMSelectable.OnInteractHandler starPress(int i) {
+    private KMSelectable.OnInteractHandler StarPress(int i) {
         return delegate {
             Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, starButtons[i].transform);
             starButtons[i].AddInteractionPunch(.1f);
@@ -327,12 +327,12 @@ public class ZeroZeroScript: MonoBehaviour {
             if (gameState == 0) {
                 Module.HandleStrike();
                 Debug.LogFormat("[Zero, Zero #{0}] A grid button was not pressed. Strike.", moduleId);
-                fadeIn(gameState);
+                FadeIn(gameState);
             }
             else if (i != positiveCorners[gameState - 1]) {
                 Module.HandleStrike();
                 Debug.LogFormat("[Zero, Zero #{0}] The {1} corner was pressed. Strike.", moduleId, cornerNames[i]);
-                fadeIn(gameState);
+                FadeIn(gameState);
                 gameState = 0;
             }
             else if (gameState == 3) {
@@ -340,14 +340,14 @@ public class ZeroZeroScript: MonoBehaviour {
                 moduleSolved = true;
                 Audio.PlaySoundAtTransform("corner3", Module.transform);
                 Debug.LogFormat("[Zero, Zero #{0}] The {1} corner was pressed. Module solved.", moduleId, cornerNames[i]);
-                starCoroutines[3] = StartCoroutine(fadeOut(3));
-                StartCoroutine(fadeColors());
+                starCoroutines[3] = StartCoroutine(FadeOut(3));
+                StartCoroutine(FadeColors());
                 gameState = 4;
             }
             else {
                 Audio.PlaySoundAtTransform("corner" + gameState, Module.transform);
                 Debug.LogFormat("[Zero, Zero #{0}] The {1} corner was pressed. That was correct.", moduleId, cornerNames[i]);
-                starCoroutines[gameState] = StartCoroutine(fadeOut(gameState));
+                starCoroutines[gameState] = StartCoroutine(FadeOut(gameState));
                 gameState++;
             }
 
@@ -361,22 +361,17 @@ public class ZeroZeroScript: MonoBehaviour {
 
     IEnumerator ProcessTwitchCommand (string command) {
         command = command.Trim().ToUpperInvariant();
-        Match m;
-        List<String> cornerNames = new List<String> {"TOP LEFT", "TOP RIGHT", "BOTTOM LEFT", "BOTTOM RIGHT",
+        List<String> cornerOptions = new List<String> {"TOP LEFT", "TOP RIGHT", "BOTTOM LEFT", "BOTTOM RIGHT",
             "TOP-LEFT", "TOP-RIGHT", "BOTTOM-LEFT", "BOTTOM-RIGHT", "TL", "TR", "BL", "BR"};
 
         if (Regex.Match(command, "[A-G][1-7]", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success) {
             yield return null;
             gridButtons[headers.IndexOf(command[0]) + (headers.IndexOf(command[1]) - 7) * 7].OnInteract();
         }
-        else if (cornerNames.Contains(command)) {
+        else if (cornerOptions.Contains(command)) {
             yield return null;
-            starButtons[cornerNames.IndexOf(command) % 4].OnInteract();
+            starButtons[cornerOptions.IndexOf(command) % 4].OnInteract();
         }
-    }
-
-    IEnumerator TwitchHandleForcedSolve () {
-        yield return null;
     }
 }
 
@@ -386,7 +381,7 @@ public class Star {
     private bool cw;
 
     // converts this star's channels into a proper color
-    public Color getStarColor() {
+    public Color GetStarColor() {
         if (channels[0] && channels[1] && channels[2]) {
             return Color.white;
         }
@@ -413,27 +408,27 @@ public class Star {
         }
     }
 
-    public int getPoints() {
+    public int GetPoints() {
         return points;
     }
 
-    public bool getDirection() {
+    public bool GetDirection() {
         return cw;
     }
     
-    public bool isClockwise() {
+    public bool IsClockwise() {
         return cw;
     }
     
-    public void setChannel(bool present, int index) {
+    public void SetChannel(bool present, int index) {
         channels[index] = present;
     }
 
-    public void setPoints(int p) {
+    public void SetPoints(int p) {
         points = p;
     }
 
-    public void setDir(bool direction) {
+    public void SetDir(bool direction) {
         cw = direction;
     }
 }
