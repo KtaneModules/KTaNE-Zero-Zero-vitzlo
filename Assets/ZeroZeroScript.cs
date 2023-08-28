@@ -11,7 +11,7 @@ public class ZeroZeroScript: MonoBehaviour {
     public KMBombInfo Bomb;
     public KMAudio Audio;
     public KMBombModule Module;
-    private string versionNumber = "1.2.2";
+    private string versionNumber = "1.2.3";
 
     public KMSelectable[] starButtons, gridButtons;
     public MeshRenderer[] gridColors;
