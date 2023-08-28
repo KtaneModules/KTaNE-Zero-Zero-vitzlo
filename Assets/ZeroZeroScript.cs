@@ -75,12 +75,20 @@ public class ZeroZeroScript: MonoBehaviour {
         AssignCoordinates();
 
         InitializeStars();
+
+        StartCoroutine(SpinStars());
     }
 
-    void Update () {
-        for (int i = 0; i < 4; i++) {
-            starRots[i].RotateAround(starRots[i].position, starRots[i].forward,
-                (stars[i].Cw ? -1 : 1) * 40 * Time.deltaTime);
+    private IEnumerator SpinStars()
+    {
+        float elapsed = 0f;
+        float duration = 10f;
+        while (true)
+        {
+            for (int i = 0; i < starRots.Length; i++)
+                starRots[i].localEulerAngles = new Vector3(0, 0, Mathf.Lerp(0, stars[i].Cw ? -360 : 360, elapsed / duration));
+            yield return null;
+            elapsed = (elapsed + Time.deltaTime) % duration;
         }
     }
 
