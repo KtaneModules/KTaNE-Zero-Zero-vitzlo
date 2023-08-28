@@ -8,5 +8,5 @@ for each of the systems must be identified.
 
 Sound effects taken from Bounce Back by Big Sean.
 
-Special thanks to Danny7007 and lone01 for providing much-needed assistance throughout the process
+Special thanks to tandycake and lone01 for providing much-needed assistance throughout the process
 of this module's creation.
