@@ -294,7 +294,7 @@ public class ZeroZeroScript: MonoBehaviour {
     }
     
     #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"Use <!{0} B3> to press the button in the second column and third row. Use <!{0} top right> or <!{0} tr> to press the top-right screen.";
+    private readonly string TwitchHelpMessage = @"Use <!{0} B3> or <!{0} press B3> to press the button in the second column and third row. Use <!{0} top right> or <!{0} tr> to press the top-right screen.";
     #pragma warning restore 414
 
     IEnumerator ProcessTwitchCommand(string command) {
@@ -302,9 +302,12 @@ public class ZeroZeroScript: MonoBehaviour {
         List<String> cornerOptions = new List<String> {"TOP LEFT", "TOP RIGHT", "BOTTOM LEFT", "BOTTOM RIGHT",
             "TOP-LEFT", "TOP-RIGHT", "BOTTOM-LEFT", "BOTTOM-RIGHT", "TL", "TR", "BL", "BR"};
 
-        if (Regex.Match(command, "[A-G][1-7]", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success) {
+        if (Regex.Match(command, "^[A-G][1-7]$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success) {
             yield return null;
             gridButtons[command[0] - 'A' + (command[1] - '1') * 7].OnInteract();
+        } else if (Regex.Match(command, "^PRESS [A-G][1-7]$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success) {
+            yield return null;
+            gridButtons[command[6] - 'A' + (command[7] - '1') * 7].OnInteract();
         }
         else if (cornerOptions.Contains(command)) {
             yield return null;
